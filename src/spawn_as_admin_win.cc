@@ -49,7 +49,7 @@ std::string QuoteCmdArg(const std::string& arg) {
   return std::string("\"") + std::string(quoted.rbegin(), quoted.rend()) + '"';
 }
 
-ChildProcess StartChildProcess(const std::string& command, const std::vector<std::string>& args, bool test_mode) {
+ChildProcess StartChildProcess(const std::string& command, const std::vector<std::string>& args, const std::string& cwd, bool test_mode) {
   CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
 
   std::string parameters;
@@ -61,8 +61,9 @@ ChildProcess StartChildProcess(const std::string& command, const std::vector<std
   shell_execute_info.fMask = SEE_MASK_NOASYNC | SEE_MASK_NOCLOSEPROCESS;
   shell_execute_info.lpVerb = test_mode ? "open" : "runas";
   shell_execute_info.lpFile = command.c_str();
+  shell_execute_info.lpDirectory = cwd.c_str();
   shell_execute_info.lpParameters = parameters.c_str();
-  shell_execute_info.nShow = SW_NORMAL;
+  shell_execute_info.nShow = SW_HIDE;
 
   if (::ShellExecuteEx(&shell_execute_info) == FALSE || shell_execute_info.hProcess == NULL) {
     return {nullptr, -1, -1, -1};

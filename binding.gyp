@@ -29,19 +29,6 @@
             '-lshell32.lib',
           ],
         }],
-        ['OS=="mac"', {
-          'sources': [
-            'src/spawn_as_admin_darwin.cc',
-          ],
-          'libraries': [
-            '$(SDKROOT)/System/Library/Frameworks/Security.framework',
-          ],
-        }],
-        ['OS=="linux"', {
-          'sources': [
-            'src/spawn_as_admin_linux.cc',
-          ],
-        }],
       ],
     }
   ]

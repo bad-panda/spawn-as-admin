@@ -46,19 +46,24 @@ function getAdminProcessClass () {
 }
 
 module.exports = function spawnAsAdmin (command, args = [], options = {}) {
-  if (process.platform !== 'darwin' && process.platform !== 'win32') {
-    throw new Error('This function only works on macOS and Windows')
+  if (process.platform !== 'win32') {
+    throw new Error('This function only works on Windows')
   }
 
   command = resolveCommand(command)
   let result = null
+  let cwd = ''
+  
+  if (options && options.cwd) {
+    cwd = options.cwd
+  }
 
-  const spawnResult = binding.spawnAsAdmin(command, args, (exitCode) => {
-    result.emit('exit', exitCode)
+  const spawnResult = binding.spawnAsAdmin(command, args, cwd, (exitCode) => {
+    result.emit('close', exitCode)
   }, options && options.testMode)
 
   if (!spawnResult) {
-    throw new Error(`Failed to obtain root priveleges to run ${command}`)
+    throw new Error(`Failed to obtain root privileges to run ${command}`)
   }
 
   const AdminProcess = getAdminProcessClass()

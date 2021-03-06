@@ -53,15 +53,21 @@ void SpawnAsAdmin(const Nan::FunctionCallbackInfo<Value>& info) {
     args.push_back(std::string(*Nan::Utf8String(js_arg)));
   }
 
-  if (!info[2]->IsFunction()) {
-    Nan::ThrowTypeError("Callback must be a function");
+  if (!info[2]->IsString()) {
+    Nan::ThrowTypeError("cwd must be a string");
+    return;
+  } 
+  std::string cwd(*Nan::Utf8String(info[2]));
+
+  if (!info[3]->IsFunction()) {
+    Nan::ThrowTypeError("Callback must be a Function");
     return;
   }
 
   bool test_mode = false;
-  if (info[3]->IsTrue()) test_mode = true;
+  if (info[4]->IsTrue()) test_mode = true;
 
-  ChildProcess child_process = spawn_as_admin::StartChildProcess(command, args, test_mode);
+  ChildProcess child_process = spawn_as_admin::StartChildProcess(command, args, cwd, test_mode);
   if (child_process.pid == -1) return;
 
   Local<Object> result = Nan::New<Object>();
@@ -70,7 +76,7 @@ void SpawnAsAdmin(const Nan::FunctionCallbackInfo<Value>& info) {
   result->Set(Nan::GetCurrentContext(), Nan::New("stdout").ToLocalChecked(), Nan::New<Integer>(child_process.stdout_file_descriptor));
   info.GetReturnValue().Set(result);
 
-  Nan::AsyncQueueWorker(new Worker(new Nan::Callback(info[2].As<Function>()), child_process, test_mode));
+  Nan::AsyncQueueWorker(new Worker(new Nan::Callback(info[3].As<Function>()), child_process, test_mode));
 }
 
 void Init(Local<Object> exports) {
