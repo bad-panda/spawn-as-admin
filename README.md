@@ -8,7 +8,7 @@ Run commands with administrator privileges
 ## Installing
 
 ```sh
-npm install spawn-as-admin
+npm install @gifyourgame/spawn-as-admin
 ```
 
 ## Docs
@@ -35,5 +35,5 @@ Returns an `AdminProcess` object that implements a subset of node's `ChildProces
 
 ## Limitations
 
-* The library only works on macOS and Windows.
-* The `stdin` and `stdout` properties are only present on macOS.
+* The library only works on Windows.
+* The `stdin` and `stdout` properties are not present.
